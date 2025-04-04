@@ -12,13 +12,42 @@ namespace DotNET_Console_Application.Models
 
         [Column("first_name")]
         public string FirstName { get; set; }
+
         [Column("last_name")]
         public string LastName { get; set; }
 
         [ForeignKey(nameof(ClassID))]
         [InverseProperty(nameof(Models.ClassRoom.Students))]
         public virtual ClassRoom ClassRoom { get; set; }
+
+        // Implementation of abstract methods from Entity
+        public override string GetDisplayString()
+        {
+            return $"{FirstName} {LastName}";
+        }
+
+        public override void PopulateFromUserInput()
+        {
+            FirstName = Program.GetString("Please enter the First Name: ");
+            LastName = Program.GetString("Please enter the Last Name: ");
+            ClassID = Program.GetInt("Please enter the Class ID: ");
+        }
+
+        public override void UpdateFromUserInput()
+        {
+            FirstName = Program.GetString("Please enter the new First Name: ");
+            LastName = Program.GetString("Please enter the new Last Name: ");
+        }
+
+        // Static helper method to create new student from user input
+        public static Student CreateFromUserInput()
+        {
+            var student = new Student();
+            student.PopulateFromUserInput();
+            return student;
+        }
     }
+
     public partial class CodeFirstContext
     {
         public DbSet<Student> Students { get; set; }
@@ -42,5 +71,3 @@ namespace DotNET_Console_Application.Models
         }
     }
 }
-
-

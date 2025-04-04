@@ -5,13 +5,13 @@ namespace DotNET_Console_Application;
 class Program
 {
     // Helper methods for input and menus
-    static string GetString(string prompt)
+    public static string GetString(string prompt)
     {
         Console.Write(prompt);
         return Console.ReadLine().Trim();
     }
 
-    static int GetInt(string prompt)
+    public static int GetInt(string prompt)
     {
         return int.Parse(GetString(prompt));
     }
@@ -34,120 +34,58 @@ class Program
         return -1;
     }
 
-    // ClassRoom CRUD operations
-    static void ListClassRooms()
+    // Generic CRUD operations
+    static void Create<T>(string entityName) where T : Entity, new()
     {
-        using var context = new CodeFirstContext();
-        foreach (var classRoom in context.ClassRooms.ToList())
+        var entity = new T();
+        entity.PopulateFromUserInput();
+        entity.Save();
+    }
+
+    static void Read<T>() where T : Entity
+    {
+        var entities = Entity.GetAll<T>();
+        foreach (var entity in entities)
         {
-            Console.WriteLine($"{classRoom.ID}. {classRoom.RoomNumber}");
+            Console.WriteLine($"{entity.ID}. {entity.GetDisplayString()}");
         }
     }
 
-    static void CreateClassRoom()
+    static void Update<T>(string entityName) where T : Entity
     {
-        using var context = new CodeFirstContext();
-        context.ClassRooms.Add(new ClassRoom
-        {
-            RoomNumber = GetString("Please enter the Room Number: ")
-        });
-        context.SaveChanges();
-    }
+        Read<T>();
 
-    static void UpdateClassRoom()
-    {
-        using var context = new CodeFirstContext();
-        ListClassRooms();
-
-        int targetID = GetInt("Please enter the classroom ID to update: ");
-        ClassRoom? target = context.ClassRooms.Find(targetID);
+        int targetID = GetInt($"Please enter the {entityName} ID to update: ");
+        T target = Entity.GetById<T>(targetID);
 
         if (target == null)
         {
-            Console.WriteLine("Could not find that classroom, please try again.");
+            Console.WriteLine($"Could not find that {entityName}, please try again.");
             return;
         }
 
-        target.RoomNumber = GetString("Please enter the new Room Number: ");
-        context.SaveChanges();
+        target.UpdateFromUserInput();
+        target.Save();
     }
 
-    static void DeleteClassRoom()
+    static void Delete<T>(string entityName) where T : Entity
     {
-        using var context = new CodeFirstContext();
-        ListClassRooms();
+        Read<T>();
 
-        int targetID = GetInt("Please enter the classroom ID to delete: ");
-        ClassRoom? target = context.ClassRooms.Find(targetID);
+        string prompt = entityName == "student" ?
+            "Please enter the student ID to update: " : // Keeping the original prompt for consistency
+            $"Please enter the {entityName} ID to delete: ";
+
+        int targetID = GetInt(prompt);
+        T target = Entity.GetById<T>(targetID);
 
         if (target == null)
         {
-            Console.WriteLine("Could not find that classroom, please try again.");
+            Console.WriteLine($"Could not find that {entityName}, please try again.");
             return;
         }
 
-        context.Remove(target);
-        context.SaveChanges();
-    }
-
-    // Student CRUD operations
-    static void ListStudents()
-    {
-        using var context = new CodeFirstContext();
-        foreach (var student in context.Students.ToList())
-        {
-            Console.WriteLine($"{student.ID}. {student.FirstName} {student.LastName}");
-        }
-    }
-
-    static void CreateStudent()
-    {
-        using var context = new CodeFirstContext();
-        context.Students.Add(new Student
-        {
-            FirstName = GetString("Please enter the First Name: "),
-            LastName = GetString("Please enter the Last Name: "),
-            ClassID = GetInt("Please enter the Class ID: ")
-        });
-        context.SaveChanges();
-    }
-
-    static void UpdateStudent()
-    {
-        using var context = new CodeFirstContext();
-        ListStudents();
-
-        int targetID = GetInt("Please enter the student ID to update: ");
-        Student? target = context.Students.Find(targetID);
-
-        if (target == null)
-        {
-            Console.WriteLine("Could not find that student, please try again.");
-            return;
-        }
-
-        target.FirstName = GetString("Please enter the new First Name: ");
-        target.LastName = GetString("Please enter the new Last Name: ");
-        context.SaveChanges();
-    }
-
-    static void DeleteStudent()
-    {
-        using var context = new CodeFirstContext();
-        ListStudents();
-
-        // Note: Keeping the prompt as "update" to match the original code
-        int targetID = GetInt("Please enter the student ID to update: ");
-        Student? target = context.Students.Find(targetID);
-
-        if (target == null)
-        {
-            Console.WriteLine("Could not find that student, please try again.");
-            return;
-        }
-
-        context.Remove(target);
-        context.SaveChanges();
+        target.Delete();
     }
 
     // Dispatch to appropriate CRUD operation based on entity type and operation choice
@@ -157,20 +95,20 @@ class Program
         {
             switch (operation)
             {
-                case 1: CreateClassRoom(); break;
-                case 2: ListClassRooms(); break;
-                case 3: UpdateClassRoom(); break;
-                case 4: DeleteClassRoom(); break;
+                case 1: Create<ClassRoom>("classroom"); break;
+                case 2: Read<ClassRoom>(); break;
+                case 3: Update<ClassRoom>("classroom"); break;
+                case 4: Delete<ClassRoom>("classroom"); break;
             }
         }
         else if (entityType == 1) // Student
         {
             switch (operation)
             {
-                case 1: CreateStudent(); break;
-                case 2: ListStudents(); break;
-                case 3: UpdateStudent(); break;
-                case 4: DeleteStudent(); break;
+                case 1: Create<Student>("student"); break;
+                case 2: Read<Student>(); break;
+                case 3: Update<Student>("student"); break;
+                case 4: Delete<Student>("student"); break;
             }
         }
     }
