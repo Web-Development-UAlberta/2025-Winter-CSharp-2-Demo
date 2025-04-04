@@ -25,7 +25,7 @@ public partial class Vehicle
     public virtual Model Model { get; set; } = null!;
 
 }
-public partial class CodeFirstContext
+public partial class CarsContext
 {
     public DbSet<Vehicle> Vehicles { get; set; }
     partial void OnModelCreatingPartialVehicle(ModelBuilder modelBuilder)

@@ -27,7 +27,7 @@ public partial class Model
     public virtual ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
 
 }
-public partial class CodeFirstContext
+public partial class CarsContext
 {
     public DbSet<Model> Models { get; set; }
     partial void OnModelCreatingPartialModel(ModelBuilder modelBuilder)

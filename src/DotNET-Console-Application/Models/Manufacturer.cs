@@ -21,7 +21,7 @@ public partial class Manufacturer
 
 }
 
-public partial class CodeFirstContext
+public partial class CarsContext
 {
     public DbSet<Manufacturer> Manufacturers { get; set; }
     partial void OnModelCreatingPartialManufacturer(ModelBuilder modelBuilder)
