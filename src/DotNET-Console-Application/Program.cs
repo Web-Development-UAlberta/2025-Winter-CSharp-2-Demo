@@ -2,7 +2,7 @@
 
 namespace DotNET_Console_Application;
 
-class Program
+public class Program
 {
     // Helper methods for input and menus
     public static string GetString(string prompt)
@@ -16,7 +16,7 @@ class Program
         return int.Parse(GetString(prompt));
     }
 
-    static int DisplayMenu(string title, string[] options)
+    public static int DisplayMenu(string title, string[] options)
     {
         Console.Write($"{title}\n");
         for (int i = 0; i < options.Length; i++)
@@ -35,14 +35,14 @@ class Program
     }
 
     // Generic CRUD operations
-    static void Create<T>(string entityName) where T : Entity, new()
+    public static void Create<T>(string entityName) where T : Entity, new()
     {
         var entity = new T();
         entity.PopulateFromUserInput();
         entity.Save();
     }
 
-    static void Read<T>() where T : Entity
+    public static void Read<T>() where T : Entity
     {
         var entities = Entity.GetAll<T>();
         foreach (var entity in entities)
@@ -51,7 +51,7 @@ class Program
         }
     }
 
-    static void Update<T>(string entityName) where T : Entity
+    public static void Update<T>(string entityName) where T : Entity
     {
         Read<T>();
 
@@ -68,7 +68,7 @@ class Program
         target.Save();
     }
 
-    static void Delete<T>(string entityName) where T : Entity
+    public static void Delete<T>(string entityName) where T : Entity
     {
         Read<T>();
 
@@ -89,7 +89,7 @@ class Program
     }
 
     // Dispatch to appropriate CRUD operation based on entity type and operation choice
-    static void PerformOperation(int entityType, int operation)
+    public static void PerformOperation(int entityType, int operation)
     {
         if (entityType == 0) // ClassRoom
         {
@@ -113,7 +113,7 @@ class Program
         }
     }
 
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
         string[] entities = ["ClassRoom", "Student", "Exit"];
         string[] operations = ["Create", "Read", "Update", "Delete", "Exit"];
