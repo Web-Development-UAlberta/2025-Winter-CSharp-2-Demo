@@ -5,14 +5,19 @@ using Microsoft.EntityFrameworkCore;
 namespace DotNET_Console_Application.Models
 {
     [Table("student")]
-    public partial class Student : Person
+    public partial class Student : Entity
     {
         [Column("course_id", TypeName = "INTEGER")]
-        public int? CourseID { get; set; }
+        public int? ClassID { get; set; }
 
-        [ForeignKey(nameof(CourseID))]
-        [InverseProperty(nameof(Models.Course.Students))]
-        public virtual Course Course { get; set; }
+        [Column("first_name")]
+        public string FirstName { get; set; }
+        [Column("last_name")]
+        public string LastName { get; set; }
+
+        [ForeignKey(nameof(ClassID))]
+        [InverseProperty(nameof(Models.ClassRoom.Students))]
+        public virtual ClassRoom ClassRoom { get; set; }
     }
     public partial class CodeFirstContext
     {
@@ -25,14 +30,14 @@ namespace DotNET_Console_Application.Models
                     ID = -1,
                     FirstName = "Jane",
                     LastName = "Doe",
-                    CourseID = -1
+                    ClassID = -1
                 }]);
-                entity.HasOne(child => child.Course)
+                entity.HasOne(child => child.ClassRoom)
                       .WithMany(parent => parent.Students)
                       .OnDelete(DeleteBehavior.SetNull)
-                      .HasConstraintName($"FK_{nameof(Student)}_{nameof(Course)}");
+                      .HasConstraintName($"FK_{nameof(Student)}_{nameof(ClassRoom)}");
 
-                entity.HasIndex(e => e.CourseID).HasDatabaseName($"FK_{nameof(Student)}_{nameof(Course)}");
+                entity.HasIndex(e => e.ClassID).HasDatabaseName($"FK_{nameof(Student)}_{nameof(ClassRoom)}");
             });
         }
     }

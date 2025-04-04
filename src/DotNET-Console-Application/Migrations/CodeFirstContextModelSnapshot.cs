@@ -3,7 +3,6 @@ using DotNET_Console_Application.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -15,39 +14,21 @@ namespace DotNET_Console_Application.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.3")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.3");
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("DotNET_Console_Application.Models.Course", b =>
+            modelBuilder.Entity("DotNET_Console_Application.Models.ClassRoom", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("Code")
+                    b.Property<string>("RoomNumber")
                         .IsRequired()
                         .HasColumnType("TEXT")
-                        .HasColumnName("code");
-
-                    b.Property<int?>("InstructorID")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("instructor_id");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("name");
+                        .HasColumnName("room_number");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("InstructorID")
-                        .HasDatabaseName("FK_Course_Instructor");
 
                     b.ToTable("course");
 
@@ -55,48 +36,12 @@ namespace DotNET_Console_Application.Migrations
                         new
                         {
                             ID = -1,
-                            Code = "COMP101",
-                            InstructorID = -1,
-                            Name = "Introduction to Programming"
+                            RoomNumber = "101A"
                         },
                         new
                         {
                             ID = -2,
-                            Code = "DATA101",
-                            InstructorID = -1,
-                            Name = "Introduction to Databases"
-                        });
-                });
-
-            modelBuilder.Entity("DotNET_Console_Application.Models.Instructor", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("first_name");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("last_name");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("instructor");
-
-                    b.HasData(
-                        new
-                        {
-                            ID = -1,
-                            FirstName = "John",
-                            LastName = "Doe"
+                            RoomNumber = "101B"
                         });
                 });
 
@@ -107,9 +52,7 @@ namespace DotNET_Console_Application.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
-
-                    b.Property<int?>("CourseID")
+                    b.Property<int?>("ClassID")
                         .HasColumnType("INTEGER")
                         .HasColumnName("course_id");
 
@@ -125,8 +68,8 @@ namespace DotNET_Console_Application.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("CourseID")
-                        .HasDatabaseName("FK_Student_Course");
+                    b.HasIndex("ClassID")
+                        .HasDatabaseName("FK_Student_ClassRoom");
 
                     b.ToTable("student");
 
@@ -134,42 +77,26 @@ namespace DotNET_Console_Application.Migrations
                         new
                         {
                             ID = -1,
-                            CourseID = -1,
+                            ClassID = -1,
                             FirstName = "Jane",
                             LastName = "Doe"
                         });
                 });
 
-            modelBuilder.Entity("DotNET_Console_Application.Models.Course", b =>
-                {
-                    b.HasOne("DotNET_Console_Application.Models.Instructor", "Instructor")
-                        .WithMany("Courses")
-                        .HasForeignKey("InstructorID")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("FK_Course_Instructor");
-
-                    b.Navigation("Instructor");
-                });
-
             modelBuilder.Entity("DotNET_Console_Application.Models.Student", b =>
                 {
-                    b.HasOne("DotNET_Console_Application.Models.Course", "Course")
+                    b.HasOne("DotNET_Console_Application.Models.ClassRoom", "ClassRoom")
                         .WithMany("Students")
-                        .HasForeignKey("CourseID")
+                        .HasForeignKey("ClassID")
                         .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("FK_Student_Course");
+                        .HasConstraintName("FK_Student_ClassRoom");
 
-                    b.Navigation("Course");
+                    b.Navigation("ClassRoom");
                 });
 
-            modelBuilder.Entity("DotNET_Console_Application.Models.Course", b =>
+            modelBuilder.Entity("DotNET_Console_Application.Models.ClassRoom", b =>
                 {
                     b.Navigation("Students");
-                });
-
-            modelBuilder.Entity("DotNET_Console_Application.Models.Instructor", b =>
-                {
-                    b.Navigation("Courses");
                 });
 #pragma warning restore 612, 618
         }
